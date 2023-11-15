@@ -17,33 +17,6 @@ namespace RevitTemplate.Extensioins
             if (level == null) return res;
 
 
-            /*
-            string faceInfo = "";
-
-            Autodesk.Revit.DB.Options opt = new Options();
-            Autodesk.Revit.DB.GeometryElement geomElem = element.get_Geometry(opt);
-            foreach (GeometryObject geomObj in geomElem)
-            {
-                Solid geomSolid = geomObj as Solid;
-                if (null != geomSolid)
-                {
-                    int faces = 0;
-                    double totalArea = 0;
-                    foreach (Face geomFace in geomSolid.Faces)
-                    {
-                        faces++;
-                        faceInfo += "Face " + faces + " area: " + geomFace.Area.ToString() + "\n";
-                        totalArea += geomFace.Area;
-                    }
-                    faceInfo += "Number of faces: " + faces + "\n";
-                    faceInfo += "Total area: " + totalArea.ToString() + "\n";
-                }
-            }
-
-            TaskDialog.Show("Revit", faceInfo);
-            */
-
-
             // Init local variables
             Options opt = new Options();
             GeometryElement geomElem = element.get_Geometry(opt);

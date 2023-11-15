@@ -81,7 +81,9 @@
     <Compile Include="App.cs" />
     <Compile Include="EntryCommand.cs" />
     <Compile Include="Extensioins\DocumentExtension.cs" />
+    <Compile Include="Extensioins\DoubleExtensions.cs" />
     <Compile Include="Extensioins\ElementExtensions.cs" />
+    <Compile Include="Extensioins\RoomExtensions.cs" />
     <Compile Include="ModelLineCreator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

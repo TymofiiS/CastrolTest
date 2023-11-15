@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace RevitTemplate
 {
-    public class ModelLineCreator
+    public static class ModelLineCreator
     {
         public static void DrawLines(
             List<Curve> curves,

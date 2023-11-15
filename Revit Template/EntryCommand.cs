@@ -13,7 +13,7 @@ namespace RevitTemplate
     [Autodesk.Revit.Attributes.Transaction(Autodesk.Revit.Attributes.TransactionMode.Manual)]
     public class EntryCommand : IExternalCommand
     {
-        const string WallTypeName = "";
+        const string WallTypeName = "FinishingType";
 
         public virtual Result Execute(
             ExternalCommandData commandData,
@@ -71,25 +71,25 @@ namespace RevitTemplate
                 if (room == null) return Result.Failed;
 
                 // Get room border lines
-                IList<Curve> borders = ExtractRoomBorders(room);
+                IList<Curve> borders = room.ExtractRoomBorders();
                 if (!borders.Any()) return Result.Failed;
 
                 // For each room border line create wall specific type
                 // with founded height
                 IList<Wall> finishingWalls =
-                    CreateWinishingWalls(borders, wallHeight, level);
+                    CreateFinishingWalls(borders, wallHeight, level);
                 if (!finishingWalls.Any()) return Result.Failed;
 
                 // Find total area of created walls plus flour area
-                double totalArea = 
-                    finishingWalls.Sum(x => 
+                double totalArea =
+                    finishingWalls.Sum(x =>
                         x.get_Parameter(BuiltInParameter.HOST_AREA_COMPUTED)
                         .AsDouble()) + room.Area;
 
                 // Show to user total area
                 TaskDialog.Show(
                     "Finishing calculator",
-                    $"Total finishing area is {SqFootToSqM(totalArea,3)} m2.");
+                    $"Total finishing area is {totalArea.SqFootToSqM()} m2.");
 
                 return Result.Succeeded;
             }
@@ -215,35 +215,10 @@ namespace RevitTemplate
             return res;
         }
 
-        private IList<Curve> ExtractRoomBorders(Room room)
-        {
-            List<Curve> result = new List<Curve>();
-
-            IList<IList<BoundarySegment>> boundarySegments =
-                room.GetBoundarySegments(new SpatialElementBoundaryOptions());
-
-            foreach (IList<BoundarySegment> boundarySegment in boundarySegments)
-            {
-                if (!boundarySegment.Any()) continue;
-
-                foreach (BoundarySegment boundary in boundarySegment)
-                {
-                    Curve curve = boundary.GetCurve();
-                    if (curve?.Length == 0) continue;
-                    result.Add(curve);
-                }
-            }
-
-            return result;
-        }
-
-        private IList<Wall> CreateWinishingWalls(
+        private IList<Wall> CreateFinishingWalls(
             IList<Curve> curves, double wallHeight, Level level)
         {
             IList<Wall> result = new List<Wall>();
-
-            // Set type search parameter
-            string typeName = "FinishingType";
 
             // Get wall type
             FilteredElementCollector collector =
@@ -252,7 +227,8 @@ namespace RevitTemplate
                 collector.WhereElementIsElementType()
                 .OfType<WallType>()
                 .Cast<WallType>()
-                .FirstOrDefault(x => string.Equals(x.Name, typeName));
+                .FirstOrDefault(x =>
+                    string.Equals(x.Name, WallTypeName));
 
             collector.Dispose();
 
@@ -288,11 +264,6 @@ namespace RevitTemplate
 
             // Result
             return result;
-        }
-
-        private double SqFootToSqM(double area, int round = 2)
-        {
-            return Math.Round( 0.092903 * area, round);
         }
     }
 }

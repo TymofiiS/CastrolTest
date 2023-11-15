@@ -81,13 +81,15 @@ namespace RevitTemplate
                 if (!finishingWalls.Any()) return Result.Failed;
 
                 // Find total area of created walls plus flour area
-                double totalArea = 0;
-                    //finishingWalls.Sum(x => x.get_Parameter(BuiltInParameter.);
+                double totalArea = 
+                    finishingWalls.Sum(x => 
+                        x.get_Parameter(BuiltInParameter.HOST_AREA_COMPUTED)
+                        .AsDouble()) + room.Area;
 
                 // Show to user total area
                 TaskDialog.Show(
                     "Finishing calculator",
-                    $"Total finishing area is {totalArea} m2.");
+                    $"Total finishing area is {SqFootToSqM(totalArea,3)} m2.");
 
                 return Result.Succeeded;
             }
@@ -288,5 +290,9 @@ namespace RevitTemplate
             return result;
         }
 
+        private double SqFootToSqM(double area, int round = 2)
+        {
+            return Math.Round( 0.092903 * area, round);
+        }
     }
 }
